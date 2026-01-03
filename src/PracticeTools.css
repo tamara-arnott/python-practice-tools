@@ -1,0 +1,313 @@
+/* Match Claude.ai Artifact Styling Exactly */
+
+/* Overall page background - light purple/lavender */
+body {
+  background: linear-gradient(to bottom right, #f5f3ff, #faf5ff) !important;
+  min-height: 100vh;
+}
+
+.App {
+  background: linear-gradient(to bottom right, #f5f3ff, #faf5ff) !important;
+}
+
+/* Main container - white card with shadow */
+body > div,
+#root > div > div:last-child {
+  max-width: 920px !important;
+  margin: 0 auto !important;
+  padding: 40px !important;
+}
+
+/* All textareas - LARGE with rounded corners */
+textarea {
+  width: 100% !important;
+  min-height: 280px !important;
+  max-height: 400px !important;
+  padding: 20px !important;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
+  font-size: 15px !important;
+  line-height: 1.6 !important;
+  border: 2px solid #e5e7eb !important;
+  border-radius: 12px !important;
+  background-color: #ffffff !important;
+  resize: vertical !important;
+  margin: 16px 0 !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+  transition: all 0.2s ease !important;
+}
+
+textarea:focus {
+  outline: none !important;
+  border-color: #8b5cf6 !important;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1) !important;
+}
+
+textarea::placeholder {
+  color: #9ca3af !important;
+}
+
+/* All buttons - larger and styled */
+button {
+  padding: 12px 24px !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  border: none !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+  margin: 4px !important;
+}
+
+/* Button colors matching Claude.ai */
+button:nth-of-type(1),
+button:first-child,
+button[type="button"]:first-of-type {
+  background: linear-gradient(to right, #8b5cf6, #7c3aed) !important;
+  color: white !important;
+}
+
+button:nth-of-type(1):hover,
+button:first-child:hover {
+  background: linear-gradient(to right, #7c3aed, #6d28d9) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 8px rgba(139, 92, 246, 0.3) !important;
+}
+
+/* Second button - yellow/gold for hints */
+button:nth-of-type(2) {
+  background: linear-gradient(to right, #f59e0b, #d97706) !important;
+  color: white !important;
+}
+
+button:nth-of-type(2):hover {
+  background: linear-gradient(to right, #d97706, #b45309) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Third button - dark gray for solutions */
+button:nth-of-type(3) {
+  background: linear-gradient(to right, #4b5563, #374151) !important;
+  color: white !important;
+}
+
+button:nth-of-type(3):hover {
+  background: linear-gradient(to right, #374151, #1f2937) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Navigation buttons (Previous/Next) */
+button:nth-of-type(4),
+button:nth-of-type(5),
+button:last-child {
+  background: #f3f4f6 !important;
+  color: #6b7280 !important;
+}
+
+button:nth-of-type(4):hover,
+button:nth-of-type(5):hover,
+button:last-child:hover {
+  background: #e5e7eb !important;
+}
+
+/* Mode toggle buttons (Full Practice / Skeleton) */
+button[style*="background"] {
+  background: #f3f4f6 !important;
+  color: #374151 !important;
+  border: 2px solid #e5e7eb !important;
+}
+
+button[style*="rgb(139, 92, 246)"],
+button[style*="#8b5cf6"] {
+  background: linear-gradient(to right, #8b5cf6, #7c3aed) !important;
+  color: white !important;
+  border: 2px solid #8b5cf6 !important;
+}
+
+/* Headers and titles */
+h1, h2, h3 {
+  color: #111827 !important;
+  font-weight: 700 !important;
+  margin: 20px 0 12px 0 !important;
+}
+
+h1 {
+  font-size: 32px !important;
+}
+
+h2 {
+  font-size: 24px !important;
+}
+
+h3 {
+  font-size: 18px !important;
+}
+
+/* Difficulty and points badges */
+div[style*="rgb(34, 197, 94)"],
+span[style*="rgb(34, 197, 94)"] {
+  background: linear-gradient(to right, #d1fae5, #a7f3d0) !important;
+  color: #047857 !important;
+  padding: 6px 14px !important;
+  border-radius: 12px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+}
+
+div[style*="rgb(168, 85, 247)"],
+span[style*="rgb(168, 85, 247)"] {
+  background: linear-gradient(to right, #ede9fe, #ddd6fe) !important;
+  color: #7c3aed !important;
+  padding: 6px 14px !important;
+  border-radius: 12px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+}
+
+/* Scenario and task boxes */
+div[style*="rgb(243, 244, 246)"] {
+  background: linear-gradient(to bottom, #faf5ff, #f3e8ff) !important;
+  border-left: 4px solid #8b5cf6 !important;
+  padding: 20px !important;
+  border-radius: 8px !important;
+  margin: 16px 0 !important;
+}
+
+/* Common mistakes section - yellow background */
+div[style*="rgb(254, 252, 232)"],
+div[style*="rgb(255, 251, 235)"] {
+  background: linear-gradient(to bottom, #fffbeb, #fef3c7) !important;
+  border-left: 4px solid #f59e0b !important;
+  padding: 20px !important;
+  border-radius: 8px !important;
+  margin: 16px 0 !important;
+}
+
+/* Progress bar and circles */
+div[style*="rounded-full"] {
+  border: 3px solid #e5e7eb !important;
+  transition: all 0.3s ease !important;
+}
+
+div[style*="rgb(139, 92, 246)"][style*="rounded-full"] {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed) !important;
+  border-color: #8b5cf6 !important;
+  color: white !important;
+  font-weight: 700 !important;
+}
+
+/* Feedback messages */
+div[style*="rgb(220, 252, 231)"],
+div[style*="green"] {
+  background: linear-gradient(to right, #d1fae5, #a7f3d0) !important;
+  border: 3px solid #10b981 !important;
+  border-radius: 12px !important;
+  padding: 20px !important;
+  color: #047857 !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  margin: 20px 0 !important;
+}
+
+div[style*="rgb(254, 226, 226)"],
+div[style*="red"] {
+  background: linear-gradient(to right, #fee2e2, #fecaca) !important;
+  border: 3px solid #ef4444 !important;
+  border-radius: 12px !important;
+  padding: 20px !important;
+  color: #991b1b !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  margin: 20px 0 !important;
+}
+
+div[style*="rgb(224, 242, 254)"],
+div[style*="blue"] {
+  background: linear-gradient(to right, #dbeafe, #bfdbfe) !important;
+  border: 3px solid #3b82f6 !important;
+  border-radius: 12px !important;
+  padding: 20px !important;
+  color: #1e40af !important;
+  font-size: 15px !important;
+  margin: 20px 0 !important;
+}
+
+/* White card containers */
+div[style*="rgb(255, 255, 255)"] {
+  background: white !important;
+  border-radius: 16px !important;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.06) !important;
+  padding: 32px !important;
+  margin: 16px 0 !important;
+}
+
+/* Quick Reference section */
+div[style*="rgb(249, 250, 251)"] {
+  background: #f9fafb !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 12px !important;
+  padding: 20px !important;
+}
+
+/* Lists and text */
+ul, ol {
+  padding-left: 24px !important;
+  margin: 12px 0 !important;
+}
+
+li {
+  margin: 8px 0 !important;
+  line-height: 1.6 !important;
+}
+
+p {
+  line-height: 1.7 !important;
+  color: #374151 !important;
+  margin: 12px 0 !important;
+}
+
+/* Code blocks */
+code, pre {
+  font-family: 'Monaco', 'Menlo', monospace !important;
+  background: #f3f4f6 !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+  font-size: 14px !important;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c4b5fd;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a78bfa;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  body > div,
+  #root > div > div:last-child {
+    padding: 20px !important;
+  }
+  
+  textarea {
+    min-height: 220px !important;
+  }
+  
+  button {
+    width: 100% !important;
+    margin: 8px 0 !important;
+  }
+}
