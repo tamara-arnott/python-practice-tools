@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { GraduationCap, CheckCircle, Circle, Trophy, ChevronDown, ChevronUp, BookOpen } from 'lucide-react';
 import './PracticeTools.css';
 
@@ -12,6 +12,11 @@ const InputValidationPracticeTool = () => {
   const [showSolution, setShowSolution] = useState(false);
   const [showSyntax, setShowSyntax] = useState(false);
   const [mode, setMode] = useState('full');
+  
+  // Collapsible section states
+  const [showScenario, setShowScenario] = useState(true);
+  const [showTask, setShowTask] = useState(true);
+  const [showMistakes, setShowMistakes] = useState(true);
 
   const exercises = [
     {
@@ -165,14 +170,14 @@ const InputValidationPracticeTool = () => {
       concept: "Multiple Conditions",
       scenario: "You need a positive number (greater than 0).",
       task: "Get input, validate it's a digit, convert to int, check if > 0. If all valid, break. Print appropriate error for each problem. Print the number.",
-      hint: "Check isdigit() first, then convert, then check > 0. Three different scenarios to handle!",
-      skeleton: "# Get positive number\nwhile True:\n    num_input = input('Positive number: ')\n    \n    if num_input.isdigit():\n        num = int(num_input)\n        if num _____ 0:\n            break\n        else:\n            print('Must be positive!')\n    else:\n        print('Enter a number!')\n\nprint(f'Number: {num}')",
-      solution: "while True:\n    num_input = input('Positive number: ')\n    \n    if num_input.isdigit():\n        num = int(num_input)\n        if num > 0:\n            break\n        else:\n            print('Must be positive!')\n    else:\n        print('Enter a number!')\n\nprint(f'Number: {num}')",
+      hint: "Check isdigit() first, then convert, then check > 0. Three different conditions!",
+      skeleton: "# Get positive number\nwhile True:\n    num_input = input('Enter positive number: ')\n    \n    if num_input.isdigit():\n        num = int(num_input)\n        if num _____ 0:\n            break\n        else:\n            print('Must be positive!')\n    else:\n        print('Please enter a number!')\n\nprint(f'Number: {num}')",
+      solution: "while True:\n    num_input = input('Enter positive number: ')\n    \n    if num_input.isdigit():\n        num = int(num_input)\n        if num > 0:\n            break\n        else:\n            print('Must be positive!')\n    else:\n        print('Please enter a number!')\n\nprint(f'Number: {num}')",
       commonMistakes: [
-        "❌ Using >= 0 instead of > 0 (accepts zero!)",
-        "❌ Checking > 0 before converting to int",
-        "❌ Only one error message for both problems",
-        "❌ Not handling zero properly"
+        "❌ Using >= instead of > (0 is not positive!)",
+        "❌ Checking positive before converting to int",
+        "❌ Not handling both digit check AND positive check",
+        "❌ Only one error message for both problems"
       ],
       validate: (answer) => {
         if (!answer.includes('while True')) {
@@ -183,313 +188,120 @@ const InputValidationPracticeTool = () => {
           return { valid: false, message: "Check if input is a digit" };
         }
         
-        if (!answer.includes('> 0')) {
-          return { valid: false, message: "Check if number is > 0 (positive)" };
+        if (!answer.includes('int(')) {
+          return { valid: false, message: "Convert to int" };
         }
         
-        if (answer.includes('>= 0')) {
-          return { valid: false, message: "❌ Use > 0 for positive, not >= 0 (that includes zero!)" };
+        if (!answer.includes('> 0')) {
+          return { valid: false, message: "Check if number > 0 (greater than 0, not >=)" };
         }
         
         if (!answer.includes('break')) {
           return { valid: false, message: "Break when valid" };
         }
         
-        return { valid: true, message: "Excellent! You validated a positive number! ✓" };
+        const printCount = (answer.match(/print\(/g) || []).length;
+        if (printCount < 3) {
+          return { valid: false, message: "Need different error messages for different problems" };
+        }
+        
+        return { valid: true, message: "Excellent! Multiple validation checks! ✓" };
       }
     },
     {
       id: 4,
-      title: "Exercise 5: Validate Float",
-      difficulty: "Intermediate",
-      points: 15,
-      concept: "Validating Decimal Numbers",
-      scenario: "You need a decimal number (like GPA: 3.8).",
-      task: "Use try/except! Try to convert input to float. If it works, break. If ValueError occurs, print error. This handles both integers and decimals!",
-      hint: "try:, price = float(input(...)), break, except ValueError:, print error",
-      skeleton: "# Get decimal number\nwhile True:\n    _____:\n        price = _____(input('Price: $'))\n        break\n    _____ ValueError:\n        print('Enter a valid number!')\n\nprint(f'Price: ${price:.2f}')",
-      solution: "while True:\n    try:\n        price = float(input('Price: $'))\n        break\n    except ValueError:\n        print('Enter a valid number!')\n\nprint(f'Price: ${price:.2f}')",
-      commonMistakes: [
-        "❌ Using .isdigit() (doesn't work for decimals!)",
-        "❌ Not using try/except for float conversion",
-        "❌ Wrong exception type",
-        "❌ Forgetting break in try block"
-      ],
-      validate: (answer) => {
-        if (!answer.includes('while True')) {
-          return { valid: false, message: "Use while True for validation loop" };
-        }
-        
-        if (!answer.includes('try:')) {
-          return { valid: false, message: "Use try: to attempt float conversion" };
-        }
-        
-        if (!answer.includes('float(')) {
-          return { valid: false, message: "Use float() to convert input" };
-        }
-        
-        if (!answer.includes('except')) {
-          return { valid: false, message: "Use except to catch conversion errors" };
-        }
-        
-        if (!answer.includes('ValueError')) {
-          return { valid: false, message: "Catch ValueError specifically" };
-        }
-        
-        if (!answer.includes('break')) {
-          return { valid: false, message: "Break when conversion succeeds" };
-        }
-        
-        if (answer.includes('.isdigit()')) {
-          return { valid: false, message: "❌ Don't use .isdigit() for floats! Use try/except instead." };
-        }
-        
-        return { valid: true, message: "Perfect! You validated decimal input with try/except! ✓" };
-      }
-    },
-    {
-      id: 5,
-      title: "Exercise 6: Menu Choice Validation",
-      difficulty: "Intermediate",
-      points: 15,
-      concept: "Validating Menu Options",
-      scenario: "You have a 3-option menu and need valid choice (1, 2, or 3).",
-      task: "Print menu options. Use while True. Get input, check if it's in ['1', '2', '3']. If yes, break. If no, print error. Print the choice.",
-      hint: "Print menu first! Then validate that choice in ['1', '2', '3']",
-      skeleton: "# Display menu\nprint('1. Add')\nprint('2. View')\nprint('3. Quit')\n\n# Get valid choice\nwhile True:\n    choice = input('Choice: ')\n    \n    if choice _____ ['1', '2', '3']:\n        break\n    else:\n        print('Invalid! Choose 1, 2, or 3')\n\nprint(f'You chose option {choice}')",
-      solution: "print('1. Add')\nprint('2. View')\nprint('3. Quit')\n\nwhile True:\n    choice = input('Choice: ')\n    \n    if choice in ['1', '2', '3']:\n        break\n    else:\n        print('Invalid! Choose 1, 2, or 3')\n\nprint(f'You chose option {choice}')",
-      commonMistakes: [
-        "❌ Not printing menu before getting choice",
-        "❌ Using numeric comparison instead of string",
-        "❌ Checking against integers [1, 2, 3] instead of strings",
-        "❌ Forgetting quotes around numbers"
-      ],
-      validate: (answer) => {
-        const printCount = (answer.match(/print\(/g) || []).length;
-        if (printCount < 4) {
-          return { valid: false, message: "Print menu (3 options) before validation" };
-        }
-        
-        if (!answer.includes('while True')) {
-          return { valid: false, message: "Use while True for validation" };
-        }
-        
-        if (!answer.includes('in ')) {
-          return { valid: false, message: "Use 'in' to check if choice is valid" };
-        }
-        
-        if (!answer.includes("['1', '2', '3']") && !answer.includes('["1", "2", "3"]')) {
-          return { valid: false, message: "Check if choice in ['1', '2', '3'] (as strings!)" };
-        }
-        
-        if (!answer.includes('break')) {
-          return { valid: false, message: "Break when choice is valid" };
-        }
-        
-        return { valid: true, message: "Excellent! You validated menu input! ✓" };
-      }
-    },
-    {
-      id: 6,
-      title: "Exercise 7: Validate Non-Empty String",
-      difficulty: "Beginner",
-      points: 10,
-      concept: "Checking String Length",
-      scenario: "You need a name, and it can't be empty.",
-      task: "Use while True. Get input with .strip() to remove spaces. Check if length > 0 (or just 'if name:' works!). If valid, break. Otherwise print error. Print the name.",
-      hint: "name = input(...).strip(), if name: (empty strings are False!), break",
-      skeleton: "# Get non-empty name\nwhile True:\n    name = input('Name: ')._____\n    \n    if _____:  # Empty strings are False!\n        break\n    else:\n        print('Name cannot be empty!')\n\nprint(f'Hello, {name}!')",
-      solution: "while True:\n    name = input('Name: ').strip()\n    \n    if name:\n        break\n    else:\n        print('Name cannot be empty!')\n\nprint(f'Hello, {name}!')",
-      commonMistakes: [
-        "❌ Not using .strip() (spaces count as input!)",
-        "❌ Using len(name) > 0 instead of just 'if name:'",
-        "❌ Not handling all-spaces input",
-        "❌ Checking before stripping"
-      ],
-      validate: (answer) => {
-        if (!answer.includes('while True')) {
-          return { valid: false, message: "Use while True for validation" };
-        }
-        
-        if (!answer.includes('.strip()')) {
-          return { valid: false, message: "Use .strip() to remove leading/trailing spaces" };
-        }
-        
-        if (!answer.includes('if name') && !answer.includes('if len(name)')) {
-          return { valid: false, message: "Check if name is not empty (if name: or if len(name) > 0)" };
-        }
-        
-        if (!answer.includes('break')) {
-          return { valid: false, message: "Break when name is valid" };
-        }
-        
-        if (!answer.includes('else:')) {
-          return { valid: false, message: "Use else to handle empty input" };
-        }
-        
-        return { valid: true, message: "Perfect! You validated non-empty string! ✓" };
-      }
-    },
-    {
-      id: 7,
-      title: "Exercise 8: Email Validation",
+      title: "Exercise 5: Validate Float with try/except",
       difficulty: "Advanced",
       points: 20,
-      concept: "String Content Validation",
-      scenario: "You need an email address (must contain @ and .).",
-      task: "Use while True. Get input with .strip(). Check if '@' in email AND '.' in email. If both true, break. Otherwise print error. Print the email.",
-      hint: "if '@' in email and '.' in email: (both conditions must be true)",
-      skeleton: "# Get valid email\nwhile True:\n    email = input('Email: ').strip()\n    \n    if _____ in email _____ _____ in email:\n        break\n    else:\n        print('Invalid email format!')\n\nprint(f'Email: {email}')",
-      solution: "while True:\n    email = input('Email: ').strip()\n    \n    if '@' in email and '.' in email:\n        break\n    else:\n        print('Invalid email format!')\n\nprint(f'Email: {email}')",
+      concept: "Exception Handling",
+      scenario: "You need to accept decimal numbers (floats), not just integers.",
+      task: "Use try/except to handle float conversion. Inside try: convert to float and check if > 0. If valid, break. In except ValueError: print error. Print the number.",
+      hint: "try: num = float(input), check if > 0, break, except ValueError: error message",
+      skeleton: "# Get positive float\nwhile True:\n    _____:\n        num = _____(input('Enter positive decimal: '))\n        if num > 0:\n            _____\n        else:\n            print('Must be positive!')\n    except _____:\n        print('Please enter a number!')\n\nprint(f'Number: {num}')",
+      solution: "while True:\n    try:\n        num = float(input('Enter positive decimal: '))\n        if num > 0:\n            break\n        else:\n            print('Must be positive!')\n    except ValueError:\n        print('Please enter a number!')\n\nprint(f'Number: {num}')",
       commonMistakes: [
-        "❌ Using or instead of and (only checks one!)",
-        "❌ Not checking for both @ and .",
-        "❌ Checking after @ symbol specifically (too complex for now!)",
-        "❌ Not using .strip()"
+        "❌ Using isdigit() (doesn't work for floats!)",
+        "❌ Forgetting except ValueError clause",
+        "❌ Not checking if positive inside try block",
+        "❌ Breaking before checking if positive"
       ],
       validate: (answer) => {
         if (!answer.includes('while True')) {
           return { valid: false, message: "Use while True" };
         }
         
-        if (!answer.includes('.strip()')) {
-          return { valid: false, message: "Use .strip() to clean input" };
+        if (!answer.includes('try:')) {
+          return { valid: false, message: "Use try block to catch conversion errors" };
         }
         
-        if (!answer.includes("'@' in email") && !answer.includes('"@" in email')) {
-          return { valid: false, message: "Check if '@' is in the email" };
-        }
-        
-        if (!answer.includes("'.' in email") && !answer.includes('"." in email')) {
-          return { valid: false, message: "Check if '.' is in the email" };
-        }
-        
-        if (!answer.includes(' and ')) {
-          return { valid: false, message: "Use 'and' to require both @ and ." };
-        }
-        
-        if (answer.includes(' or ')) {
-          return { valid: false, message: "❌ Use 'and' not 'or'! Email needs BOTH @ and ." };
-        }
-        
-        if (!answer.includes('break')) {
-          return { valid: false, message: "Break when email is valid" };
-        }
-        
-        return { valid: true, message: "Excellent! You validated email format! ✓" };
-      }
-    },
-    {
-      id: 8,
-      title: "Exercise 9: Validate List Length",
-      difficulty: "Advanced",
-      points: 20,
-      concept: "Building Valid List from Input",
-      scenario: "You need exactly 3 student names (no more, no less).",
-      task: "Create empty list. Use for i in range(3). Inside loop, use while True to get non-empty name with validation. Append valid name to list. Print the list.",
-      hint: "Nested loops! Outer for loop (3 times), inner while loop (validate each name)",
-      skeleton: "# Get exactly 3 valid names\nnames = []\n\nfor i in range(3):\n    while True:\n        name = input(f'Student {i+1}: ').strip()\n        if name:\n            _____  # Exit validation loop\n        else:\n            print('Name cannot be empty!')\n    \n    names._____(name)\n\nprint(f'Students: {names}')",
-      solution: "names = []\n\nfor i in range(3):\n    while True:\n        name = input(f'Student {i+1}: ').strip()\n        if name:\n            break\n        else:\n            print('Name cannot be empty!')\n    \n    names.append(name)\n\nprint(f'Students: {names}')",
-      commonMistakes: [
-        "❌ Only one loop (can't validate each!)",
-        "❌ Appending inside while loop (adds multiple times!)",
-        "❌ Breaking from wrong loop",
-        "❌ Not creating empty list first"
-      ],
-      validate: (answer) => {
-        if (!answer.match(/names\s*=\s*\[\]/)) {
-          return { valid: false, message: "Create empty list: names = []" };
-        }
-        
-        if (!answer.includes('for ') || !answer.includes('range(3)')) {
-          return { valid: false, message: "Use for i in range(3) to get 3 names" };
-        }
-        
-        if (!answer.includes('while True')) {
-          return { valid: false, message: "Use while True inside the for loop to validate each name" };
-        }
-        
-        if (!answer.includes('.strip()')) {
-          return { valid: false, message: "Use .strip() to clean input" };
-        }
-        
-        if (!answer.includes('break')) {
-          return { valid: false, message: "Break from while loop when name is valid" };
-        }
-        
-        if (!answer.includes('.append(')) {
-          return { valid: false, message: "Append each valid name to the list" };
-        }
-        
-        const breakPos = answer.indexOf('break');
-        const appendPos = answer.indexOf('.append(');
-        
-        if (appendPos > 0 && appendPos < breakPos) {
-          return { valid: false, message: "❌ Append AFTER breaking from while loop, not inside it!" };
-        }
-        
-        return { valid: true, message: "Perfect! You validated and collected exactly 3 names! ✓" };
-      }
-    },
-    {
-      id: 9,
-      title: "Exercise 10: Complete Input System",
-      difficulty: "Advanced",
-      points: 20,
-      concept: "Multiple Validation Types Together",
-      scenario: "You're creating a student record with validated name (non-empty), age (number 0-120), and GPA (decimal 0.0-4.0).",
-      task: "Get and validate name (non-empty). Get and validate age (isdigit, 0-120). Get and validate GPA (float, 0.0-4.0). Store in dictionary. Print the complete record.",
-      hint: "Three separate validation loops! Each with different checks. Then student = {'name': name, 'age': age, 'gpa': gpa}",
-      skeleton: "# Validate name\nwhile True:\n    name = input('Name: ').strip()\n    if name:\n        break\n    print('Name required!')\n\n# Validate age\nwhile True:\n    age_input = input('Age: ')\n    if age_input.isdigit():\n        age = int(age_input)\n        if 0 <= age <= 120:\n            break\n        print('Age must be 0-120!')\n    else:\n        print('Enter a number!')\n\n# Validate GPA\nwhile True:\n    try:\n        gpa = float(input('GPA: '))\n        if 0.0 <= gpa <= 4.0:\n            break\n        print('GPA must be 0.0-4.0!')\n    except ValueError:\n        print('Enter a valid number!')\n\n# Create student record\nstudent = {'name': name, 'age': age, 'gpa': gpa}\nprint(f'Student: {student}')",
-      solution: "while True:\n    name = input('Name: ').strip()\n    if name:\n        break\n    print('Name required!')\n\nwhile True:\n    age_input = input('Age: ')\n    if age_input.isdigit():\n        age = int(age_input)\n        if 0 <= age <= 120:\n            break\n        print('Age must be 0-120!')\n    else:\n        print('Enter a number!')\n\nwhile True:\n    try:\n        gpa = float(input('GPA: '))\n        if 0.0 <= gpa <= 4.0:\n            break\n        print('GPA must be 0.0-4.0!')\n    except ValueError:\n        print('Enter a valid number!')\n\nstudent = {'name': name, 'age': age, 'gpa': gpa}\nprint(f'Student: {student}')",
-      commonMistakes: [
-        "❌ Not using different validation for each field",
-        "❌ Using isdigit() for GPA (need try/except!)",
-        "❌ Not checking range after converting",
-        "❌ Not creating dictionary at end"
-      ],
-      validate: (answer) => {
-        const whileCount = (answer.match(/while True/g) || []).length;
-        if (whileCount < 3) {
-          return { valid: false, message: "Need 3 separate validation loops (name, age, GPA)" };
-        }
-        
-        if (!answer.includes('.strip()')) {
-          return { valid: false, message: "Use .strip() for name validation" };
-        }
-        
-        if (!answer.includes('.isdigit()')) {
-          return { valid: false, message: "Use .isdigit() for age validation" };
-        }
-        
-        if (!answer.includes('try:') || !answer.includes('except')) {
-          return { valid: false, message: "Use try/except for GPA validation" };
+        if (!answer.includes('except ValueError')) {
+          return { valid: false, message: "Catch ValueError exception" };
         }
         
         if (!answer.includes('float(')) {
-          return { valid: false, message: "Convert GPA to float" };
+          return { valid: false, message: "Convert to float to accept decimals" };
         }
         
-        if (!answer.includes('student') || !answer.includes('{')) {
-          return { valid: false, message: "Create student dictionary at the end" };
+        if (!answer.includes('> 0')) {
+          return { valid: false, message: "Check if number > 0" };
         }
         
-        const breakCount = (answer.match(/break/g) || []).length;
-        if (breakCount < 3) {
-          return { valid: false, message: "Each validation loop needs a break statement" };
+        if (!answer.includes('break')) {
+          return { valid: false, message: "Break when valid" };
         }
         
-        return { valid: true, message: "🎉 PERFECT! You created a complete validated input system! ✓" };
+        return { valid: true, message: "Outstanding! You used try/except for validation! ✓" };
       }
     }
   ];
 
+  // Collapsible Header Component
+  const CollapsibleHeader = ({ title, isOpen, onToggle, icon = "📝" }) => (
+    <div 
+      onClick={onToggle}
+      className="flex items-center justify-between cursor-pointer p-3 bg-gradient-to-r from-purple-100 to-indigo-100 rounded-lg hover:from-purple-200 hover:to-indigo-200 transition-all mb-2"
+      role="button"
+      aria-expanded={isOpen}
+      tabIndex={0}
+      onKeyPress={(e) => e.key === 'Enter' && onToggle()}
+    >
+      <div className="flex items-center gap-2">
+        <span className="text-xl">{icon}</span>
+        <h4 className="font-bold text-purple-900">{title}</h4>
+      </div>
+      <ChevronDown 
+        className={`w-5 h-5 text-purple-700 transition-transform duration-300 ${
+          isOpen ? 'rotate-0' : '-rotate-90'
+        }`}
+        aria-hidden="true"
+      />
+    </div>
+  );
+
+  // Auto-grow textarea based on content
+  const adjustTextareaHeight = (textarea) => {
+    if (!textarea) return;
+    textarea.style.height = 'auto';
+    const newHeight = Math.max(250, textarea.scrollHeight);
+    textarea.style.height = Math.min(500, newHeight) + 'px';
+  };
+
+  // Auto-adjust when userAnswer changes
+  useEffect(() => {
+    const textarea = document.querySelector('textarea');
+    if (textarea) adjustTextareaHeight(textarea);
+  }, [userAnswer]);
+
+  const currentExerciseData = exercises[currentExercise];
+  const totalPoints = completedExercises.reduce((sum, id) => sum + exercises.find(ex => ex.id === id).points, 0);
+  const maxPoints = exercises.reduce((sum, ex) => sum + ex.points, 0);
+
   const handleCheckAnswer = () => {
-    const result = exercises[currentExercise].validate(userAnswer);
+    const result = currentExerciseData.validate(userAnswer);
     setFeedback(result);
     
-    if (result.valid && !completedExercises.includes(currentExercise)) {
-      setCompletedExercises([...completedExercises, currentExercise]);
+    if (result.valid && !completedExercises.includes(currentExerciseData.id)) {
+      setCompletedExercises([...completedExercises, currentExerciseData.id]);
     }
   };
 
@@ -513,130 +325,117 @@ const InputValidationPracticeTool = () => {
     }
   };
 
-  const loadSkeleton = () => {
-    setUserAnswer(exercises[currentExercise].skeleton);
+  const handleLoadSkeleton = () => {
+    setUserAnswer(currentExerciseData.skeleton);
     setMode('skeleton');
   };
 
-  const clearAnswer = () => {
+  const handleStartFresh = () => {
     setUserAnswer('');
     setMode('full');
   };
 
-  const totalPoints = completedExercises.reduce((sum, exerciseId) => {
-    return sum + exercises[exerciseId].points;
-  }, 0);
-
-  const maxPoints = exercises.reduce((sum, ex) => sum + ex.points, 0);
-
-  const currentExerciseData = exercises[currentExercise];
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-yellow-100 p-8">
-      <div className="max-w-6xl mx-auto">
-        
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <BookOpen className="w-10 h-10 text-orange-600" />
-              <div>
-                <h1 className="text-3xl font-bold text-gray-800">Input Validation Practice</h1>
-                <p className="text-gray-600">Python Patterns - Tool #3</p>
-              </div>
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-orange-100 p-6">
+      <div className="max-w-7xl mx-auto">
+        <div className="bg-gradient-to-r from-orange-600 to-yellow-500 rounded-lg shadow-xl p-8 mb-6 text-white">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-4xl font-bold mb-2 flex items-center gap-3">
+                <GraduationCap className="w-10 h-10" />
+                Input Validation Practice
+              </h1>
+              <p className="text-xl text-orange-100">Master while loops, validation checks, and error handling</p>
             </div>
-            <div className="flex items-center gap-2">
-              <Trophy className="w-6 h-6 text-yellow-500" />
-              <span className="text-2xl font-bold text-orange-600">{totalPoints}/{maxPoints}</span>
+            <div className="text-right">
+              <div className="text-3xl font-bold">{totalPoints}/{maxPoints}</div>
+              <div className="text-orange-100">Points</div>
             </div>
           </div>
-          
-          <div className="w-full bg-gray-200 rounded-full h-3">
-            <div 
-              className="bg-orange-600 h-3 rounded-full transition-all duration-500"
+
+          <div className="mt-6 bg-white bg-opacity-20 rounded-full h-3">
+            <div
+              className="bg-white h-3 rounded-full transition-all duration-500"
               style={{ width: `${(completedExercises.length / exercises.length) * 100}%` }}
             />
           </div>
-          <p className="text-sm text-gray-600 mt-2">
+          <p className="text-center mt-2 text-orange-100">
             {completedExercises.length} of {exercises.length} exercises completed
           </p>
         </div>
 
-        <div className="bg-white rounded-lg shadow-lg p-4 mb-6">
-          <div className="grid grid-cols-5 md:grid-cols-10 gap-2">
-            {exercises.map((exercise, index) => (
-              <button
-                key={exercise.id}
-                onClick={() => {
-                  setCurrentExercise(index);
-                  setUserAnswer('');
-                  setFeedback(null);
-                  setShowHint(false);
-                  setShowSolution(false);
-                }}
-                className={`p-3 rounded-lg font-semibold transition-all ${
-                  currentExercise === index
-                    ? 'bg-orange-600 text-white'
-                    : completedExercises.includes(index)
-                    ? 'bg-green-100 text-green-700'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
-              >
-                {completedExercises.includes(index) ? (
-                  <CheckCircle className="w-5 h-5 mx-auto" />
-                ) : (
-                  <Circle className="w-5 h-5 mx-auto" />
-                )}
-                <span className="text-xs mt-1 block">{index + 1}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          
+        <div className="grid lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
             <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-2xl font-bold text-gray-800">{currentExerciseData.title}</h2>
-                <div className="flex items-center gap-2">
-                  <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                    currentExerciseData.difficulty === 'Beginner' ? 'bg-green-100 text-green-700' :
-                    currentExerciseData.difficulty === 'Intermediate' ? 'bg-yellow-100 text-yellow-700' :
-                    'bg-red-100 text-red-700'
-                  }`}>
-                    {currentExerciseData.difficulty}
-                  </span>
-                  <span className="px-3 py-1 rounded-full text-sm font-semibold bg-orange-100 text-orange-700">
-                    {currentExerciseData.points} pts
-                  </span>
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800">{currentExerciseData.title}</h2>
+                  <div className="flex gap-2 mt-2">
+                    <span className="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-sm font-semibold">
+                      {currentExerciseData.difficulty}
+                    </span>
+                    <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm font-semibold">
+                      {currentExerciseData.points} points
+                    </span>
+                    {completedExercises.includes(currentExerciseData.id) && (
+                      <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-semibold flex items-center gap-1">
+                        <CheckCircle className="w-4 h-4" />
+                        Completed
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
 
               <div className="mb-4">
-                <span className="inline-block px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm font-semibold mb-4">
-                  Concept: {currentExerciseData.concept}
-                </span>
+                <div className="bg-orange-50 border-l-4 border-orange-500 p-4">
+                  <p className="font-semibold text-gray-700 mb-1">💡 Concept:</p>
+                  <p className="text-gray-700">{currentExerciseData.concept}</p>
+                </div>
               </div>
 
-              <div className="bg-orange-50 border-l-4 border-orange-500 p-4 mb-4">
-                <p className="text-sm font-semibold text-gray-700 mb-2">✓ Scenario:</p>
-                <p className="text-gray-700 mb-3">{currentExerciseData.scenario}</p>
-                <p className="text-sm font-semibold text-gray-700 mb-2">🎯 Your Task:</p>
-                <p className="text-gray-700 font-medium">{currentExerciseData.task}</p>
+              {/* Scenario - Collapsible */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg mb-4">
+                <CollapsibleHeader 
+                  title="Scenario"
+                  icon="📚"
+                  isOpen={showScenario}
+                  onToggle={() => setShowScenario(!showScenario)}
+                />
+                {showScenario && (
+                  <div className="p-4 pt-0">
+                    <p className="text-gray-700">{currentExerciseData.scenario}</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Task - Collapsible */}
+              <div className="bg-indigo-50 border border-indigo-200 rounded-lg mb-4">
+                <CollapsibleHeader 
+                  title="Your Task"
+                  icon="🎯"
+                  isOpen={showTask}
+                  onToggle={() => setShowTask(!showTask)}
+                />
+                {showTask && (
+                  <div className="p-4 pt-0">
+                    <p className="text-gray-700">{currentExerciseData.task}</p>
+                  </div>
+                )}
               </div>
 
               <div className="flex gap-3 mb-4">
                 <button
-                  onClick={clearAnswer}
-                  className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                  onClick={handleStartFresh}
+                  className={`px-6 py-2 rounded-lg font-semibold transition-colors ${
                     mode === 'full' ? 'bg-orange-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                   }`}
                 >
-                  Full Practice
+                  Start Fresh
                 </button>
                 <button
-                  onClick={loadSkeleton}
-                  className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                  onClick={handleLoadSkeleton}
+                  className={`px-6 py-2 rounded-lg font-semibold transition-colors ${
                     mode === 'skeleton' ? 'bg-orange-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                   }`}
                 >
@@ -645,19 +444,34 @@ const InputValidationPracticeTool = () => {
               </div>
 
               <textarea
+                ref={(el) => el && adjustTextareaHeight(el)}
                 value={userAnswer}
-                onChange={(e) => setUserAnswer(e.target.value)}
+                onChange={(e) => {
+                  setUserAnswer(e.target.value);
+                  adjustTextareaHeight(e.target);
+                }}
+                style={{ minHeight: '250px', maxHeight: '500px' }}
                 placeholder="Write your Python code here..."
-                className="w-full h-64 p-3 border-2 border-gray-300 rounded-lg font-mono text-sm focus:border-orange-500 focus:outline-none mb-4 bg-gray-50"
+                className="w-full p-3 border-2 border-gray-300 rounded-lg font-mono text-sm focus:border-orange-500 focus:outline-none mb-4 bg-gray-50 resize-y"
               />
 
-              <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-4">
-                <p className="font-semibold text-gray-700 mb-2">⚠️ Common Mistakes to Avoid:</p>
-                <ul className="space-y-1">
-                  {currentExerciseData.commonMistakes.map((mistake, index) => (
-                    <li key={index} className="text-sm text-gray-700">{mistake}</li>
-                  ))}
-                </ul>
+              {/* Common Mistakes - Collapsible */}
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg mb-4">
+                <CollapsibleHeader 
+                  title="Common Mistakes to Avoid"
+                  icon="⚠️"
+                  isOpen={showMistakes}
+                  onToggle={() => setShowMistakes(!showMistakes)}
+                />
+                {showMistakes && (
+                  <div className="p-4 pt-0">
+                    <ul className="space-y-1">
+                      {currentExerciseData.commonMistakes.map((mistake, index) => (
+                        <li key={index} className="text-sm text-gray-700">{mistake}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
 
               <div className="flex flex-wrap gap-3 mb-4">
@@ -691,19 +505,35 @@ const InputValidationPracticeTool = () => {
                 </div>
               )}
 
+              {/* Hint - Collapsible */}
               {showHint && (
-                <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-4">
-                  <p className="font-semibold text-gray-700 mb-2">💡 Hint:</p>
-                  <p className="text-gray-700">{currentExerciseData.hint}</p>
+                <div className="bg-yellow-50 border-l-4 border-yellow-500 rounded-lg mb-4">
+                  <CollapsibleHeader 
+                    title="Hint"
+                    icon="💡"
+                    isOpen={showHint}
+                    onToggle={() => setShowHint(!showHint)}
+                  />
+                  <div className="p-4 pt-0">
+                    <p className="text-gray-700">{currentExerciseData.hint}</p>
+                  </div>
                 </div>
               )}
 
+              {/* Solution - Collapsible */}
               {showSolution && (
-                <div className="bg-gray-50 border-l-4 border-gray-500 p-4 mb-4">
-                  <p className="font-semibold text-gray-700 mb-2">✓ Solution:</p>
-                  <pre className="bg-gray-800 text-green-400 p-3 rounded overflow-x-auto whitespace-pre-wrap">
-                    {currentExerciseData.solution}
-                  </pre>
+                <div className="bg-gray-50 border-l-4 border-gray-500 rounded-lg mb-4">
+                  <CollapsibleHeader 
+                    title="Solution"
+                    icon="✅"
+                    isOpen={showSolution}
+                    onToggle={() => setShowSolution(!showSolution)}
+                  />
+                  <div className="p-4 pt-0">
+                    <pre className="bg-gray-800 text-green-400 p-3 rounded overflow-x-auto whitespace-pre-wrap">
+                      {currentExerciseData.solution}
+                    </pre>
+                  </div>
                 </div>
               )}
 

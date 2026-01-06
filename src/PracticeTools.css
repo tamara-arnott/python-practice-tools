@@ -196,31 +196,80 @@ div[style*="rgb(139, 92, 246)"][style*="rounded-full"] {
   font-weight: 700 !important;
 }
 
-/* Feedback messages */
+/* ============================================ */
+/* ANIMATED COLOR-CODED FEEDBACK - NEW! */
+/* ============================================ */
+
+/* Keyframe animations */
+@keyframes flashGreen {
+  0%, 100% { 
+    background: linear-gradient(to right, #d1fae5, #a7f3d0);
+    transform: scale(1);
+  }
+  50% { 
+    background: linear-gradient(to right, #a7f3d0, #6ee7b7);
+    transform: scale(1.02);
+  }
+}
+
+@keyframes flashRed {
+  0%, 100% { 
+    background: linear-gradient(to right, #fee2e2, #fecaca);
+    transform: translateX(0);
+  }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Correct answer feedback - GREEN with flash */
 div[style*="rgb(220, 252, 231)"],
-div[style*="green"] {
+div[style*="green"],
+div:has(> *:contains("✓")),
+div:has(> *:contains("Perfect")),
+div:has(> *:contains("Correct")),
+div:has(> *:contains("Excellent")) {
   background: linear-gradient(to right, #d1fae5, #a7f3d0) !important;
-  border: 3px solid #10b981 !important;
+  border: 4px solid #10b981 !important;
   border-radius: 12px !important;
-  padding: 20px !important;
+  padding: 24px !important;
   color: #047857 !important;
-  font-size: 16px !important;
-  font-weight: 600 !important;
-  margin: 20px 0 !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  margin: 24px 0 !important;
+  animation: flashGreen 0.6s ease-in-out, slideIn 0.3s ease-out !important;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3) !important;
 }
 
+/* Incorrect answer feedback - RED with shake */
 div[style*="rgb(254, 226, 226)"],
-div[style*="red"] {
+div[style*="red"],
+div:has(> *:contains("❌")),
+div:has(> *:contains("Incorrect")),
+div:has(> *:contains("Try again")) {
   background: linear-gradient(to right, #fee2e2, #fecaca) !important;
-  border: 3px solid #ef4444 !important;
+  border: 4px solid #ef4444 !important;
   border-radius: 12px !important;
-  padding: 20px !important;
+  padding: 24px !important;
   color: #991b1b !important;
-  font-size: 16px !important;
-  font-weight: 600 !important;
-  margin: 20px 0 !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  margin: 24px 0 !important;
+  animation: flashRed 0.6s ease-in-out, slideIn 0.3s ease-out !important;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3) !important;
 }
 
+/* Hint feedback - BLUE */
 div[style*="rgb(224, 242, 254)"],
 div[style*="blue"] {
   background: linear-gradient(to right, #dbeafe, #bfdbfe) !important;
@@ -228,8 +277,20 @@ div[style*="blue"] {
   border-radius: 12px !important;
   padding: 20px !important;
   color: #1e40af !important;
-  font-size: 15px !important;
+  font-size: 16px !important;
   margin: 20px 0 !important;
+  animation: slideIn 0.3s ease-out !important;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2) !important;
+}
+
+/* General feedback styling */
+.feedback {
+  padding: 24px !important;
+  border-radius: 12px !important;
+  margin: 24px 0 !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  animation: slideIn 0.3s ease-out !important;
 }
 
 /* White card containers */
