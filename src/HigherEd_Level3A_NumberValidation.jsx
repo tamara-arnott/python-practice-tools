@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AlertCircle, CheckCircle2, Trophy, Target, Book, Code, Eye, EyeOff, Lightbulb, AlertTriangle } from 'lucide-react';
 import './PracticeTools.css';
 
@@ -12,6 +12,12 @@ const HigherEdLevel3ANumberValidation = () => {
   const [mode, setMode] = useState('full');
   const [score, setScore] = useState(0);
   const [completedExercises, setCompletedExercises] = useState(new Set());
+  
+  // Collapsible section states
+  const [showConceptBox, setShowConceptBox] = useState(true);
+  const [showScenario, setShowScenario] = useState(true);
+  const [showMistakes, setShowMistakes] = useState(true);
+  const [showReference, setShowReference] = useState(true);
 
   const exercises = [
     {
@@ -496,6 +502,44 @@ print(scores)`,
     }
   ];
 
+
+  // Collapsible Header Component
+  const CollapsibleHeader = ({ title, isOpen, onToggle, icon = "📝" }) => (
+    <div 
+      onClick={onToggle}
+      className="flex items-center justify-between cursor-pointer p-3 bg-gradient-to-r from-purple-100 to-indigo-100 rounded-lg hover:from-purple-200 hover:to-indigo-200 transition-all mb-2"
+      role="button"
+      aria-expanded={isOpen}
+      tabIndex={0}
+      onKeyPress={(e) => e.key === 'Enter' && onToggle()}
+    >
+      <div className="flex items-center gap-2">
+        <span className="text-xl">{icon}</span>
+        <h4 className="font-bold text-purple-900">{title}</h4>
+      </div>
+      <ChevronDown 
+        className={`w-5 h-5 text-purple-700 transition-transform duration-300 ${
+          isOpen ? 'rotate-0' : '-rotate-90'
+        }`}
+        aria-hidden="true"
+      />
+    </div>
+  );
+
+  // Auto-grow textarea based on content
+  const adjustTextareaHeight = (textarea) => {
+    if (!textarea) return;
+    textarea.style.height = 'auto';
+    const newHeight = Math.max(250, textarea.scrollHeight);
+    textarea.style.height = Math.min(500, newHeight) + 'px';
+  };
+
+  // Auto-adjust when userAnswer changes
+  useEffect(() => {
+    const textarea = document.querySelector('textarea');
+    if (textarea) adjustTextareaHeight(textarea);
+  }, [userAnswer]);
+
   const currentEx = exercises[currentExercise];
 
   const handleCheckAnswer = () => {
@@ -582,14 +626,14 @@ print(scores)`,
           <button
             onClick={prevExercise}
             disabled={currentExercise === 0}
-            className="px-6 py-3 bg-white rounded-lg shadow-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-all"
+            className="px-6 py-3 bg-white rounded-lg shadow-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-all resize-y"
           >
             ← Previous
           </button>
           <button
             onClick={nextExercise}
             disabled={currentExercise === exercises.length - 1}
-            className="px-6 py-3 bg-white rounded-lg shadow-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-all"
+            className="px-6 py-3 bg-white rounded-lg shadow-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-all resize-y"
           >
             Next →
           </button>
@@ -628,9 +672,18 @@ print(scores)`,
                 <Target className="w-8 h-8 text-blue-500" />
               </div>
 
-              <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-4 rounded">
-                <p className="text-sm text-blue-800 font-medium mb-2">📚 Scenario:</p>
-                <p className="text-blue-900">{currentEx.scenario}</p>
+              <div className="bg-blue-50 border-l-4 border-blue-500 rounded mb-4">
+                <CollapsibleHeader 
+                  title="Scenario"
+                  icon="📚"
+                  isOpen={showScenario}
+                  onToggle={() => setShowScenario(!showScenario)}
+                />
+                {showScenario && (
+                  <div className="p-4 pt-0">
+                    <p className="text-blue-900">{currentEx.scenario}</p>
+                  </div>
+                )}
               </div>
 
               <div className="prose max-w-none mb-4">
@@ -655,15 +708,14 @@ print(scores)`,
 
               {/* Hint Toggle */}
               <div className="mb-4">
-                <button
-                  onClick={() => setShowHint(!showHint)}
-                  className="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium"
-                >
-                  <Lightbulb className="w-5 h-5" />
-                  {showHint ? 'Hide Hint' : 'Show Hint'}
-                </button>
+                <CollapsibleHeader 
+                  title={showHint ? 'Hide Hint' : 'Show Hint'}
+                  icon="💡"
+                  isOpen={showHint}
+                  onToggle={() => setShowHint(!showHint)}
+                />
                 {showHint && (
-                  <div className="mt-3 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
                     <p className="text-yellow-900">{currentEx.hint}</p>
                   </div>
                 )}
@@ -706,7 +758,7 @@ print(scores)`,
                   </button>
                   <button
                     onClick={clearAnswer}
-                    className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-all"
+                    className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-all resize-y"
                   >
                     Clear
                   </button>
@@ -714,9 +766,14 @@ print(scores)`,
               </div>
               
               <textarea
+                ref={(el) => el && adjustTextareaHeight(el)}
                 value={userAnswer}
-                onChange={(e) => setUserAnswer(e.target.value)}
-                className="w-full h-96 p-4 font-mono text-sm border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+                onChange={(e) => {
+                  setUserAnswer(e.target.value);
+                  adjustTextareaHeight(e.target);
+                }}
+                style={{ minHeight: '250px', maxHeight: '500px' }}
+                className="w-full p-4 font-mono text-sm border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all resize-y"
                 placeholder="Write your code here or click 'Skeleton' for guided practice..."
                 spellCheck="false"
               />

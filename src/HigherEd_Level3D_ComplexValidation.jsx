@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AlertCircle, CheckCircle2, Trophy, Target, Book, Code, Eye, EyeOff, Lightbulb, AlertTriangle } from 'lucide-react';
 import './PracticeTools.css';
 
@@ -12,6 +12,12 @@ const HigherEdLevel3DComplexValidation = () => {
   const [mode, setMode] = useState('full');
   const [score, setScore] = useState(0);
   const [completedExercises, setCompletedExercises] = useState(new Set());
+  
+  // Collapsible section states
+  const [showConceptBox, setShowConceptBox] = useState(true);
+  const [showScenario, setShowScenario] = useState(true);
+  const [showMistakes, setShowMistakes] = useState(true);
+  const [showReference, setShowReference] = useState(true);
 
   const exercises = [
     {
@@ -648,6 +654,44 @@ else:
     }
   ];
 
+
+  // Collapsible Header Component
+  const CollapsibleHeader = ({ title, isOpen, onToggle, icon = "📝" }) => (
+    <div 
+      onClick={onToggle}
+      className="flex items-center justify-between cursor-pointer p-3 bg-gradient-to-r from-purple-100 to-indigo-100 rounded-lg hover:from-purple-200 hover:to-indigo-200 transition-all mb-2"
+      role="button"
+      aria-expanded={isOpen}
+      tabIndex={0}
+      onKeyPress={(e) => e.key === 'Enter' && onToggle()}
+    >
+      <div className="flex items-center gap-2">
+        <span className="text-xl">{icon}</span>
+        <h4 className="font-bold text-purple-900">{title}</h4>
+      </div>
+      <ChevronDown 
+        className={`w-5 h-5 text-purple-700 transition-transform duration-300 ${
+          isOpen ? 'rotate-0' : '-rotate-90'
+        }`}
+        aria-hidden="true"
+      />
+    </div>
+  );
+
+  // Auto-grow textarea based on content
+  const adjustTextareaHeight = (textarea) => {
+    if (!textarea) return;
+    textarea.style.height = 'auto';
+    const newHeight = Math.max(250, textarea.scrollHeight);
+    textarea.style.height = Math.min(500, newHeight) + 'px';
+  };
+
+  // Auto-adjust when userAnswer changes
+  useEffect(() => {
+    const textarea = document.querySelector('textarea');
+    if (textarea) adjustTextareaHeight(textarea);
+  }, [userAnswer]);
+
   const currentEx = exercises[currentExercise];
 
   const handleCheckAnswer = () => {
@@ -829,7 +873,7 @@ else:
                   </button>
                   <button
                     onClick={clearAnswer}
-                    className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-all"
+                    className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-all resize-y"
                   >
                     Clear
                   </button>
@@ -837,9 +881,14 @@ else:
               </div>
               
               <textarea
+                ref={(el) => el && adjustTextareaHeight(el)}
                 value={userAnswer}
-                onChange={(e) => setUserAnswer(e.target.value)}
-                className="w-full h-96 p-4 font-mono text-sm border-2 border-gray-200 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-200 transition-all"
+                onChange={(e) => {
+                  setUserAnswer(e.target.value);
+                  adjustTextareaHeight(e.target);
+                }}
+                style={{ minHeight: '250px', maxHeight: '500px' }}
+                className="w-full p-4 font-mono text-sm border-2 border-gray-200 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-200 transition-all resize-y"
                 placeholder="Write your code here or click 'Skeleton' for guided practice..."
                 spellCheck="false"
               />

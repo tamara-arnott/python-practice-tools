@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { GraduationCap, CheckCircle, Circle, Trophy, ChevronDown, ChevronUp, BookOpen } from 'lucide-react';
 import './PracticeTools.css';
 
@@ -12,6 +12,11 @@ const ListsDictionariesPracticeTool = () => {
   const [showSolution, setShowSolution] = useState(false);
   const [showSyntax, setShowSyntax] = useState(false);
   const [mode, setMode] = useState('full');
+  
+  // Collapsible section states
+  const [showScenario, setShowScenario] = useState(true);
+  const [showTask, setShowTask] = useState(true);
+  const [showMistakes, setShowMistakes] = useState(true);
 
   const exercises = [
     {
@@ -489,6 +494,44 @@ const ListsDictionariesPracticeTool = () => {
     }
   ];
 
+
+  // Collapsible Header Component
+  const CollapsibleHeader = ({ title, isOpen, onToggle, icon = "📝" }) => (
+    <div 
+      onClick={onToggle}
+      className="flex items-center justify-between cursor-pointer p-3 bg-gradient-to-r from-purple-100 to-indigo-100 rounded-lg hover:from-purple-200 hover:to-indigo-200 transition-all mb-2"
+      role="button"
+      aria-expanded={isOpen}
+      tabIndex={0}
+      onKeyPress={(e) => e.key === 'Enter' && onToggle()}
+    >
+      <div className="flex items-center gap-2">
+        <span className="text-xl">{icon}</span>
+        <h4 className="font-bold text-purple-900">{title}</h4>
+      </div>
+      <ChevronDown 
+        className={`w-5 h-5 text-purple-700 transition-transform duration-300 ${
+          isOpen ? 'rotate-0' : '-rotate-90'
+        }`}
+        aria-hidden="true"
+      />
+    </div>
+  );
+
+  // Auto-grow textarea based on content
+  const adjustTextareaHeight = (textarea) => {
+    if (!textarea) return;
+    textarea.style.height = 'auto';
+    const newHeight = Math.max(250, textarea.scrollHeight);
+    textarea.style.height = Math.min(500, newHeight) + 'px';
+  };
+
+  // Auto-adjust when userAnswer changes
+  useEffect(() => {
+    const textarea = document.querySelector('textarea');
+    if (textarea) adjustTextareaHeight(textarea);
+  }, [userAnswer]);
+
   const handleCheckAnswer = () => {
     const result = exercises[currentExercise].validate(userAnswer);
     setFeedback(result);
@@ -650,19 +693,33 @@ const ListsDictionariesPracticeTool = () => {
               </div>
 
               <textarea
+                ref={(el) => el && adjustTextareaHeight(el)}
                 value={userAnswer}
-                onChange={(e) => setUserAnswer(e.target.value)}
+                onChange={(e) => {
+                  setUserAnswer(e.target.value);
+                  adjustTextareaHeight(e.target);
+                }}
+                style={{ minHeight: '250px', maxHeight: '500px' }}
                 placeholder="Write your Python code here..."
-                className="w-full h-64 p-3 border-2 border-gray-300 rounded-lg font-mono text-sm focus:border-purple-500 focus:outline-none mb-4 bg-gray-50"
+                className="w-full p-3 border-2 border-gray-300 rounded-lg font-mono text-sm focus:border-purple-500 focus:outline-none mb-4 bg-gray-50 resize-y"
               />
 
-              <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-4">
-                <p className="font-semibold text-gray-700 mb-2">⚠️ Common Mistakes to Avoid:</p>
-                <ul className="space-y-1">
-                  {currentExerciseData.commonMistakes.map((mistake, index) => (
-                    <li key={index} className="text-sm text-gray-700">{mistake}</li>
-                  ))}
-                </ul>
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg mb-4">
+                <CollapsibleHeader 
+                  title="Common Mistakes to Avoid"
+                  icon="⚠️"
+                  isOpen={showMistakes}
+                  onToggle={() => setShowMistakes(!showMistakes)}
+                />
+                {showMistakes && (
+                  <div className="p-4 pt-0">
+                    <ul className="space-y-1">
+                      {currentExerciseData.commonMistakes.map((mistake, index) => (
+                        <li key={index} className="text-sm text-gray-700">{mistake}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
 
               <div className="flex flex-wrap gap-3 mb-4">
