@@ -66,11 +66,6 @@ function HomePage() {
           </Link>
 
           <Link to="/level1-basic-dictionaries" className="tool-card level-1">
-            <h4>Basic Dictionaries</h4>
-            <p>Introduction to Python dictionaries</p>
-          </Link>
-
-          <Link to="/level1-lists-dicts-together" className="tool-card level-1">
             <h4>Lists & Dicts Together</h4>
             <p>Combine lists and dictionaries</p>
           </Link>
@@ -85,11 +80,6 @@ function HomePage() {
           </Link>
 
           <Link to="/level2-sum-accumulator" className="tool-card level-2">
-            <h4>Sum Accumulator</h4>
-            <p>Practice sum accumulation patterns</p>
-          </Link>
-
-          <Link to="/level2-count-accumulator" className="tool-card level-2">
             <h4>Count Accumulator</h4>
             <p>Practice counting patterns</p>
           </Link>
